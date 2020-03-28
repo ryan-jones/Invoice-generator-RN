@@ -3,18 +3,32 @@ import { StyleSheet, View, ScrollView } from "react-native";
 import Form from "./components/Form";
 import { DEFAULT_REDUCER } from "./store";
 import StoreContext from "./contexts/store";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const INITIAL_STATE = {
   newInvoice: {
     companyName: "",
     companyDNI: "",
+    companyAddress: "",
     serviceConducted: "",
     invoiceNumber: "",
     issueDate: "",
     billableDays: "",
-    billableRate: ""
+    billableRate: "",
+    billingDate: {
+      day: "",
+      month: "",
+      year: ""
+    },
+    dueDate: {
+      day: "",
+      month: "",
+      year: ""
+    }
   },
   selectedInvoice: null,
+  storedCompanies: [],
   storedInvoices: []
 };
 

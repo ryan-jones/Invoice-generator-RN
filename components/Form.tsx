@@ -5,6 +5,9 @@ import { View, StyleSheet, Text, Button, TouchableOpacity } from "react-native";
 import useStore from "../hooks/useStore";
 import { SET_NEW_INVOICE } from "../store";
 import { convertCurrencyToNumber, formatCurrency } from "../utils";
+import { FORM_FIELDS } from "../utils/constants";
+import camelCase from "lodash/camelCase";
+import CompanyDetails from "./Inputs/CompanyDetails/CompanyDetails";
 
 const defaultValues: Invoice = {
   companyName: "",
@@ -13,7 +16,17 @@ const defaultValues: Invoice = {
   invoiceNumber: "",
   issueDate: "",
   billableDays: "",
-  billableRate: ""
+  billableRate: "",
+  billingDate: {
+    day: "",
+    month: "",
+    year: ""
+  },
+  dueDate: {
+    day: "",
+    month: "",
+    year: ""
+  }
 };
 
 export default function Form() {
@@ -26,13 +39,6 @@ export default function Form() {
     marker: ","
   });
 
-  const totalAmountInvoiced = () => {
-    const days = Number(formValues.billableDays);
-    const rate = convertCurrencyToNumber(formValues.billableRate, currency);
-    const amount = days * rate;
-    return formatCurrency(amount, currency);
-  };
-
   const updateForm = (key: string, value: string) => {
     setFormValues(currentForm => ({
       ...currentForm,
@@ -40,67 +46,59 @@ export default function Form() {
     }));
   };
 
-  const formInputs: (IFormInput | ICurrencyInput)[] = [
-    {
-      label: "Company Name:",
-      value: formValues.companyName,
-      onChange: name => updateForm("companyName", name),
-      placeholder: "Kodly Consulting",
-      type: "text"
-    },
-    {
-      label: "Company DNI:",
-      value: formValues.companyDNI,
-      onChange: DNI => updateForm("companyDNI", DNI),
-      placeholder: "123456789",
-      type: "text"
-    },
-    {
-      label: "Invoice Number:",
-      value: formValues.invoiceNumber,
-      onChange: invoice => updateForm("invoiceNumber", invoice),
-      placeholder: "0001",
-      type: "text"
-    },
-    {
-      label: "Date Issued:",
-      value: formValues.issueDate,
-      onChange: date => updateForm("issueDate", date),
-      placeholder: "01/01/2020",
-      type: "date"
-    },
-    {
-      label: "Billable Days:",
-      value: formValues.billableDays,
-      onChange: days => updateForm("billableDays", days),
-      placeholder: "22",
-      type: "text"
-    },
-    {
-      label: "Billable Rate:",
-      value: formValues.billableRate,
-      currency: currency,
-      onChange: rate => updateForm("billableRate", rate),
-      onCurrencyChange: currency => {
-        setCurrency(currency);
-        updateForm("billableRate", "");
-      },
-      placeholder: "0001",
-      type: "currency"
-    },
-    {
-      label: "Service Conducted: ",
-      value: formValues.serviceConducted,
-      onChange: service => updateForm("serviceConducted", service),
-      placeholder: "Mango microfrontend migration",
-      type: "text"
-    }
-  ];
+  const updateFormDate = (
+    scheduling: string,
+    dateType: string,
+    value: string
+  ) => {
+    let newValues = { ...formValues[`${scheduling}Date`], [dateType]: value };
+    setFormValues(currentForm => ({
+      ...currentForm,
+      [`${scheduling}Date`]: {
+        ...newValues
+      }
+    }));
+  };
 
-  const resetAll = () => setFormValues(defaultValues);
+  const formInputs: (IFormInput | ICurrencyInput)[] = FORM_FIELDS.map(field => {
+    const key = camelCase(field.label);
+    let newValues: any = {
+      value: formValues[key],
+      onChange: value => updateForm(key, value)
+    };
+
+    if (field.type === "currency") {
+      newValues.currency = currency;
+      newValues.onCurrencyChange = curr => {
+        setCurrency(curr);
+        updateForm(key, "");
+      };
+    }
+    if (field.type === "date") {
+      newValues.setDay = day => updateFormDate(field.scheduling, "day", day);
+      newValues.setMonth = month =>
+        updateFormDate(field.scheduling, "month", month);
+      newValues.setYear = year =>
+        updateFormDate(field.scheduling, "year", year);
+    }
+    return {
+      ...field,
+      ...newValues
+    };
+  });
+
+  const totalAmountInvoiced = (): string => {
+    const days = Number(formValues.billableDays);
+    const rate = convertCurrencyToNumber(formValues.billableRate, currency);
+    const amount = days * rate;
+    return formatCurrency(amount, currency);
+  };
+
+  const resetAll = (): void => setFormValues(defaultValues);
 
   return (
     <View style={styles.form}>
+      <CompanyDetails />
       {formInputs.map((input: IFormInput) => (
         <FormInput key={input.label} {...input} />
       ))}

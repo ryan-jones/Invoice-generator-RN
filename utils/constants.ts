@@ -9,3 +9,55 @@ export const CURRENCIES: ICurrency[] = [
   { name: "TWD", icon: "$", format: "zh-TW", marker: "," },
   { name: "CNY", icon: "￥", format: "zh-CN", marker: "," }
 ];
+
+export const FORM_FIELDS: any[] = [
+  {
+    label: "Invoice Number",
+    placeholder: "0001",
+    type: "text"
+  },
+  {
+    label: "Service Conducted",
+    placeholder: "Mango microfrontend migration",
+    type: "text"
+  },
+  {
+    label: "Billable Days",
+    placeholder: "22",
+    type: "text"
+  },
+  {
+    label: "Billable Rate",
+    placeholder: "0001",
+    type: "currency"
+  },
+  {
+    label: "Billing Date",
+    type: "date",
+    scheduling: "billing"
+  },
+  {
+    label: "Due Date",
+    type: "date",
+    scheduling: "due"
+  }
+];
+
+export const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
+export const DAYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+export const YEARS = ["2020", "2021"];

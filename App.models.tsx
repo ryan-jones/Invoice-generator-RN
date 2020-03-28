@@ -4,6 +4,7 @@ export interface IFormInput {
   onChange: (text: string) => void;
   placeholder: string;
   type: string;
+  scheduling?: string;
 }
 
 export interface ICurrencyInput extends IFormInput {
@@ -18,6 +19,12 @@ export interface ICurrency {
   marker: string;
 }
 
+interface IDate {
+  day: string;
+  month: string;
+  year: string;
+}
+
 export interface Invoice {
   companyName: string;
   companyDNI: string;
@@ -26,4 +33,6 @@ export interface Invoice {
   issueDate: string;
   billableDays: string;
   billableRate: string;
+  billingDate: IDate;
+  dueDate: IDate;
 }
