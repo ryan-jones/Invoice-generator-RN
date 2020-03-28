@@ -37,8 +37,6 @@ export default function CompanyDetails() {
     }));
   };
 
-  console.log("currentState", state);
-
   return (
     <View style={styles.companyContainer}>
       <Modal visible={showAddCompanyModal} animationType="slide">

@@ -46,15 +46,11 @@ export default function Form() {
     }));
   };
 
-  const updateFormDate = (
-    scheduling: string,
-    dateType: string,
-    value: string
-  ) => {
-    let newValues = { ...formValues[`${scheduling}Date`], [dateType]: value };
+  const updateFormDate = (dateType: string, key: string, value: string) => {
+    let newValues = { ...formValues[dateType], [key]: value };
     setFormValues(currentForm => ({
       ...currentForm,
-      [`${scheduling}Date`]: {
+      [dateType]: {
         ...newValues
       }
     }));
@@ -62,29 +58,33 @@ export default function Form() {
 
   const formInputs: (IFormInput | ICurrencyInput)[] = FORM_FIELDS.map(field => {
     const key = camelCase(field.label);
-    let newValues: any = {
+    const defaultValues = {
+      ...field,
       value: formValues[key],
       onChange: value => updateForm(key, value)
     };
 
-    if (field.type === "currency") {
-      newValues.currency = currency;
-      newValues.onCurrencyChange = curr => {
-        setCurrency(curr);
-        updateForm(key, "");
-      };
+    switch (field.type) {
+      case "currency":
+        return {
+          ...defaultValues,
+          currency,
+          onCurrencyChange: curr => {
+            setCurrency(curr);
+            updateForm(key, "");
+          }
+        };
+      case "date":
+        return {
+          ...field,
+          value: formValues[key],
+          setDay: day => updateFormDate(field.dateType, "day", day),
+          setMonth: month => updateFormDate(field.dateType, "month", month),
+          setYear: year => updateFormDate(field.dateType, "year", year)
+        };
+      default:
+        return defaultValues;
     }
-    if (field.type === "date") {
-      newValues.setDay = day => updateFormDate(field.scheduling, "day", day);
-      newValues.setMonth = month =>
-        updateFormDate(field.scheduling, "month", month);
-      newValues.setYear = year =>
-        updateFormDate(field.scheduling, "year", year);
-    }
-    return {
-      ...field,
-      ...newValues
-    };
   });
 
   const totalAmountInvoiced = (): string => {

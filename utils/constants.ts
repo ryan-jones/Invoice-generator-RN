@@ -34,13 +34,13 @@ export const FORM_FIELDS: any[] = [
   {
     label: "Billing Date",
     type: "date",
-    scheduling: "billing"
-  },
-  {
-    label: "Due Date",
-    type: "date",
-    scheduling: "due"
+    dateType: "billingDate"
   }
+  // {
+  //   label: "Due Date",
+  //   type: "date",
+  //   dateType: "dueDate"
+  // }
 ];
 
 export const MONTHS = [

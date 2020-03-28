@@ -1,30 +1,46 @@
 import React from "react";
-import { StyleSheet, View, Text, Picker, Modal } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import DatePicker from "./DatePicker";
 import { MONTHS, DAYS, YEARS } from "../../utils/constants";
 
-export default function DateInput(props) {
+interface IDateProps {
+  value: {
+    day: string;
+    month: string;
+    year: string;
+  };
+  dateType: string;
+  label: string;
+  onChange: () => void;
+  setDay: () => void;
+  setMonth: () => void;
+  setYear: () => void;
+  type: string;
+}
+
+export default function DateInput(props: IDateProps) {
+  const day = props.value.day || new Date().getDate();
+  const month = props.value.month || MONTHS[new Date().getMonth()];
+  const year = props.value.year || new Date().getFullYear();
+
   return (
     <View style={styles.fieldContainer}>
       <Text style={styles.label}>{props.label}</Text>
       <View style={styles.pickerContainer}>
         <DatePicker
           dateValue={MONTHS}
-          value={props.value.month}
+          value={month.toString()}
           set={props.setMonth}
-          label="Month:"
         />
         <DatePicker
           dateValue={DAYS}
-          value={props.value.day}
+          value={day.toString()}
           set={props.setDay}
-          label="Day:"
         />
         <DatePicker
           dateValue={YEARS}
-          value={props.value.year}
+          value={year.toString()}
           set={props.setYear}
-          label="Year:"
         />
       </View>
     </View>

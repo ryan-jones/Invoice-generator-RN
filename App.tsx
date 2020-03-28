@@ -31,7 +31,6 @@ const INITIAL_STATE = {
   storedCompanies: [],
   storedInvoices: []
 };
-
 export default function App() {
   const [state, dispatch] = useReducer(DEFAULT_REDUCER, INITIAL_STATE);
   return (

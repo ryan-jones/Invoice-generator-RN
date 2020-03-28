@@ -9,10 +9,16 @@ import {
   View
 } from "react-native";
 
-export default function DatePicker(props) {
+interface IProps {
+  dateValue: string[];
+  value: string;
+  set: (value: string) => void;
+}
+
+export default function DatePicker(props: IProps) {
   const [showModal, setShowModal] = useState(false);
   return (
-    <View>
+    <View style={styles.modalContainer}>
       <Modal visible={showModal} animationType="slide">
         <Picker
           selectedValue={props.value}
@@ -26,33 +32,24 @@ export default function DatePicker(props) {
       </Modal>
       <TouchableOpacity
         onPress={() => setShowModal(true)}
-        style={{ width: "30%" }}
+        style={{ width: "100%" }}
       >
-        <Text style={styles.text}>Month:</Text>
-        <Text>{props.value.month}</Text>
+        <Text>{props.value}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  fieldContainer: {
-    width: "100%",
-    marginVertical: 10
+  modalContainer: {
+    flex: 1,
+    justifyContent: "space-evenly",
+    alignItems: "center"
   },
   text: {
     width: "100%"
   },
   label: {
     marginBottom: 15
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "space-evenly",
-    alignItems: "center"
-  },
-  valueContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly"
   }
 });
