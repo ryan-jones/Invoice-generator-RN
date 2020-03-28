@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import FormInput from "./FormInput";
-import { IFormInput } from "../App.models";
+import { IFormInput, ICurrencyInput, Invoice } from "../App.models";
 import { View, StyleSheet, Text, Button, TouchableOpacity } from "react-native";
+import useStore from "../hooks/useStore";
+import { SET_NEW_INVOICE } from "../store";
+import { convertRateForFormatting, formatCurrency } from "../utils";
 
-const defaultValues = {
+const defaultValues: Invoice = {
   companyName: "",
   companyDNI: "",
   serviceConducted: "",
@@ -14,60 +17,82 @@ const defaultValues = {
 };
 
 export default function Form() {
-  const [formValues, setFormValues] = useState(defaultValues);
+  const { state, dispatch } = useStore();
+  const [formValues, setFormValues] = useState(state.newInvoice);
+  const [currency, setCurrency] = useState({
+    name: "USD",
+    icon: "$",
+    format: "en-USD",
+    marker: ","
+  });
 
-  const totalAmountInvoiced =
-    Number(formValues.billableDays) * Number(formValues.billableRate);
+  const totalAmountInvoiced = () => {
+    const days = Number(formValues.billableDays);
+    const rate = Number(
+      convertRateForFormatting(formValues.billableRate, currency)
+    );
+    const amount = days * rate;
+    return formatCurrency(amount, currency);
+  };
 
-  const updateForm = (key, value) => {
+  const updateForm = (key: string, value: string) => {
     setFormValues(currentForm => ({
       ...currentForm,
       [key]: value
     }));
   };
 
-  const formInputs: IFormInput[] = [
+  const formInputs: (IFormInput | ICurrencyInput)[] = [
     {
       label: "Company Name:",
       value: formValues.companyName,
       onChange: name => updateForm("companyName", name),
-      placeholder: "Kodly Consulting"
+      placeholder: "Kodly Consulting",
+      type: "text"
     },
     {
       label: "Company DNI:",
       value: formValues.companyDNI,
       onChange: DNI => updateForm("companyDNI", DNI),
-      placeholder: "123456789"
+      placeholder: "123456789",
+      type: "text"
     },
     {
       label: "Invoice Number:",
       value: formValues.invoiceNumber,
       onChange: invoice => updateForm("invoiceNumber", invoice),
-      placeholder: "0001"
+      placeholder: "0001",
+      type: "text"
     },
     {
       label: "Date Issued:",
       value: formValues.issueDate,
       onChange: date => updateForm("issueDate", date),
-      placeholder: "01/01/2020"
+      placeholder: "01/01/2020",
+      type: "date"
     },
     {
       label: "Billable Days:",
       value: formValues.billableDays,
       onChange: days => updateForm("billableDays", days),
-      placeholder: "22"
+      placeholder: "22",
+      type: "text"
     },
     {
       label: "Billable Rate:",
       value: formValues.billableRate,
+      currency: currency,
       onChange: rate => updateForm("billableRate", rate),
-      placeholder: "0001"
+      onCurrencyChange: currency => setCurrency(currency),
+      placeholder: "0001",
+      type: "currency"
     },
     {
       label: "Service Conducted: ",
       value: formValues.serviceConducted,
       onChange: service => updateForm("serviceConducted", service),
-      placeholder: "Mango microfrontend migration"
+      placeholder: "Mango microfrontend migration",
+      type: "text"
     }
   ];
 
@@ -78,11 +103,19 @@ export default function Form() {
       {formInputs.map((input: IFormInput) => (
         <FormInput key={input.label} {...input} />
       ))}
-      <Text style={styles.total}>Invoiced Amount: {totalAmountInvoiced}</Text>
+      <Text style={styles.total}>
+        Invoiced Amount:
+        {totalAmountInvoiced()}
+      </Text>
       <TouchableOpacity>
         <View style={styles.buttonsContainer}>
-          <Button title="Add Invoice" onPress={() => console.log("pressed")} />
-          <Button title="Reset" onPress={resetAll} />
+          <Button
+            title="Add Invoice"
+            onPress={() =>
+              dispatch({ type: SET_NEW_INVOICE, payload: formValues })
+            }
+          />
+          <Button title="Reset" color="red" onPress={resetAll} />
         </View>
       </TouchableOpacity>
     </View>

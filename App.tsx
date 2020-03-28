@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import Form from "./components/Form";
+import { DEFAULT_REDUCER } from "./store";
+import StoreContext from "./contexts/store";
+
+const INITIAL_STATE = {
+  newInvoice: {
+    companyName: "",
+    companyDNI: "",
+    serviceConducted: "",
+    invoiceNumber: "",
+    issueDate: "",
+    billableDays: "",
+    billableRate: ""
+  },
+  selectedInvoice: null,
+  storedInvoices: []
+};
 
 export default function App() {
+  const [state, dispatch] = useReducer(DEFAULT_REDUCER, INITIAL_STATE);
   return (
-    <ScrollView>
-      <View style={styles.viewport}>
-        <Form />
-      </View>
-    </ScrollView>
+    <StoreContext.Provider value={{ state, dispatch }}>
+      <ScrollView>
+        <View style={styles.viewport}>
+          <Form />
+        </View>
+      </ScrollView>
+    </StoreContext.Provider>
   );
 }
 
