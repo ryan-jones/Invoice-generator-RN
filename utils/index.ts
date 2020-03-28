@@ -8,12 +8,12 @@ export const formatCurrency = (value: number, currency: ICurrency): string => {
   return formatter.format(value);
 };
 
-export const convertRateForFormatting = (
+export const convertCurrencyToNumber = (
   rate: string,
   currency: ICurrency
-): string => {
+): number => {
   const convertedRate = rate.split(currency.marker).join("");
-  return currency.name === "EUR"
-    ? convertedRate.replace(",", ".")
-    : convertedRate;
+  return Number(
+    currency.name === "EUR" ? convertedRate.replace(",", ".") : convertedRate
+  );
 };

@@ -4,7 +4,7 @@ import { IFormInput, ICurrencyInput, Invoice } from "../App.models";
 import { View, StyleSheet, Text, Button, TouchableOpacity } from "react-native";
 import useStore from "../hooks/useStore";
 import { SET_NEW_INVOICE } from "../store";
-import { convertRateForFormatting, formatCurrency } from "../utils";
+import { convertCurrencyToNumber, formatCurrency } from "../utils";
 
 const defaultValues: Invoice = {
   companyName: "",
@@ -28,9 +28,7 @@ export default function Form() {
 
   const totalAmountInvoiced = () => {
     const days = Number(formValues.billableDays);
-    const rate = Number(
-      convertRateForFormatting(formValues.billableRate, currency)
-    );
+    const rate = convertCurrencyToNumber(formValues.billableRate, currency);
     const amount = days * rate;
     return formatCurrency(amount, currency);
   };
@@ -83,7 +81,10 @@ export default function Form() {
       value: formValues.billableRate,
       currency: currency,
       onChange: rate => updateForm("billableRate", rate),
-      onCurrencyChange: currency => setCurrency(currency),
+      onCurrencyChange: currency => {
+        setCurrency(currency);
+        updateForm("billableRate", "");
+      },
       placeholder: "0001",
       type: "currency"
     },
@@ -103,10 +104,7 @@ export default function Form() {
       {formInputs.map((input: IFormInput) => (
         <FormInput key={input.label} {...input} />
       ))}
-      <Text style={styles.total}>
-        Invoiced Amount:
-        {totalAmountInvoiced()}
-      </Text>
+      <Text style={styles.total}>Invoiced Amount: {totalAmountInvoiced()}</Text>
       <TouchableOpacity>
         <View style={styles.buttonsContainer}>
           <Button
