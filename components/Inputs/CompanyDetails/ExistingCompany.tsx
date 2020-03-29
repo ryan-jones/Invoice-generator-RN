@@ -3,7 +3,17 @@ import { View, TouchableOpacity, Text, Button, StyleSheet } from "react-native";
 import useStore from "../../../hooks/useStore";
 import { SELECT_COMPANY } from "../../../store";
 
-export default function ExistingCompany({ company, closeModal }) {
+interface IProps {
+  company: {
+    companyName: string;
+    companyDNI: string;
+    companyAddress: string;
+  };
+  closeModal: () => void;
+  editCompany: () => void;
+}
+
+export default function ExistingCompany({ company, closeModal, editCompany }) {
   const { dispatch } = useStore();
 
   return (
@@ -21,7 +31,7 @@ export default function ExistingCompany({ company, closeModal }) {
         </View>
       </TouchableOpacity>
       <View style={styles.editCompany}>
-        <Button title="Edit Company" onPress={() => console.log("editing")} />
+        <Button title="Edit Company" onPress={editCompany} />
       </View>
     </View>
   );

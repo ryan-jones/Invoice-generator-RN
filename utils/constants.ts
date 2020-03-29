@@ -12,11 +12,6 @@ export const CURRENCIES: ICurrency[] = [
 
 export const FORM_FIELDS: any[] = [
   {
-    label: "Invoice Number",
-    placeholder: "0001",
-    type: "text"
-  },
-  {
     label: "Service Conducted",
     placeholder: "Mango microfrontend migration",
     type: "text"
@@ -35,12 +30,12 @@ export const FORM_FIELDS: any[] = [
     label: "Billing Date",
     type: "date",
     dateType: "billingDate"
+  },
+  {
+    label: "Due Date",
+    type: "date",
+    dateType: "dueDate"
   }
-  // {
-  //   label: "Due Date",
-  //   type: "date",
-  //   dateType: "dueDate"
-  // }
 ];
 
 export const MONTHS = [

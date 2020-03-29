@@ -6,13 +6,12 @@ import {
   Button,
   TouchableOpacity
 } from "react-native";
-import FormInput from "../../FormInput";
 import useStore from "../../../hooks/useStore";
-import { ADD_COMPANY } from "../../../store";
 import TextField from "../../Common/TextField";
 import ExistingCompany from "./ExistingCompany";
-import CancelButton from "../../Common/CancelButton";
 import NewCompany from "./NewCompany";
+import EditExistingCompany from "./EditExistingCompany";
+import CancelButton from "../../Common/CancelButton";
 
 const defaultCompanyValues = {
   companyName: "",
@@ -24,6 +23,9 @@ export default function CompanyDetails() {
   const { state } = useStore();
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [showSelectCompanyModal, setShowSelectCompanyModal] = useState(false);
+  const [showEditSelectCompanyModal, setShowEditSelectCompanyModal] = useState(
+    false
+  );
   const [company, setCompany] = useState({
     companyName: state.newInvoice.companyName,
     companyDNI: state.newInvoice.companyDNI,
@@ -52,27 +54,59 @@ export default function CompanyDetails() {
           {state.storedCompanies.map(storedCompany => (
             <ExistingCompany
               company={storedCompany}
+              editCompany={() => {
+                setCompany(storedCompany);
+                setShowSelectCompanyModal(false);
+                setShowEditSelectCompanyModal(true);
+              }}
               closeModal={() => setShowSelectCompanyModal(false)}
             />
           ))}
-          <Button
-            title="Add Company"
-            onPress={() => {
-              setCompany(defaultCompanyValues);
-              setShowSelectCompanyModal(false);
-              setShowAddCompanyModal(true);
-            }}
-          />
+          <View>
+            <Button
+              title="Add Company"
+              onPress={() => {
+                setCompany(defaultCompanyValues);
+                setShowSelectCompanyModal(false);
+                setShowAddCompanyModal(true);
+              }}
+            />
+            <CancelButton
+              title="Cancel"
+              onPress={() => setShowSelectCompanyModal(false)}
+            />
+          </View>
         </View>
       </Modal>
 
+      <Modal visible={showEditSelectCompanyModal} animationType="slide">
+        <EditExistingCompany
+          company={company}
+          editAndSelect={() => {
+            setShowEditSelectCompanyModal(false);
+          }}
+          editWithoutSelect={() => {
+            setShowEditSelectCompanyModal(false);
+            setShowSelectCompanyModal(false);
+          }}
+        />
+      </Modal>
+
       <TouchableOpacity onPress={() => setShowSelectCompanyModal(true)}>
-        <TextField label="Company Name:" value={state.newInvoice.companyName} />
+        <TextField
+          isCompanyName
+          label="Company Name:"
+          value={state.newInvoice.companyName}
+        />
       </TouchableOpacity>
       <TextField label="Company DNI:" value={state.newInvoice.companyDNI} />
       <TextField
         label="Company Address:"
         value={state.newInvoice.companyAddress}
+      />
+      <TextField
+        label="Invoice Number"
+        value={state.newInvoice.invoiceNumber}
       />
     </View>
   );
