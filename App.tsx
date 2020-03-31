@@ -1,56 +1,60 @@
 import React, { useReducer } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import Form from "./components/Form";
+import BaseLayout from "./components/BaseLayout";
+import Form from "./components/NewInvoice/NewInvoice";
 import { DEFAULT_REDUCER } from "./store";
 import StoreContext from "./contexts/store";
 import "intl";
 import "intl/locale-data/jsonp/en";
 
 const INITIAL_STATE = {
-  newInvoice: {
-    companyName: "",
-    companyDNI: "",
-    companyAddress: "",
-    serviceConducted: "",
-    invoiceNumber: "",
-    issueDate: "",
-    billableDays: "",
-    billableRate: "",
-    billingDate: {
-      day: "",
-      month: "",
-      year: ""
-    },
-    dueDate: {
-      day: "",
-      month: "",
-      year: ""
-    }
-  },
-  selectedInvoice: null,
-  storedCompanies: [],
-  storedInvoices: []
+	newInvoice: {
+		company: {
+			id: "",
+			name: "",
+			taxId: "",
+			address: ""
+		},
+		serviceConducted: "",
+		invoiceNumber: "",
+		issueDate: "",
+		billableDays: "",
+		billableRate: "",
+		billingDate: {
+			day: "",
+			month: "",
+			year: ""
+		},
+		dueDate: {
+			day: "",
+			month: "",
+			year: ""
+		}
+	},
+	selectedInvoice: null,
+	storedCompanies: [],
+	storedInvoices: []
 };
 export default function App() {
-  const [state, dispatch] = useReducer(DEFAULT_REDUCER, INITIAL_STATE);
-  return (
-    <StoreContext.Provider value={{ state, dispatch }}>
-      <ScrollView>
-        <View style={styles.viewport}>
-          <Form />
-        </View>
-      </ScrollView>
-    </StoreContext.Provider>
-  );
+	const [state, dispatch] = useReducer(DEFAULT_REDUCER, INITIAL_STATE);
+	return (
+		<StoreContext.Provider value={{ state, dispatch }}>
+			<View style={styles.viewport}>
+				<BaseLayout>
+					<ScrollView>
+						<Form />
+					</ScrollView>
+				</BaseLayout>
+			</View>
+		</StoreContext.Provider>
+	);
 }
 
 const styles = StyleSheet.create({
-  viewport: {
-    backgroundColor: "#fff",
-    alignItems: "center",
-    width: "100%",
-    paddingTop: 100,
-    paddingLeft: 15,
-    paddingRight: 15
-  }
+	viewport: {
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		width: "100%"
+	}
 });
